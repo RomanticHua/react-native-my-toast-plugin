@@ -1,16 +1,33 @@
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, ScrollView} from 'react-native'
+import {StyleSheet, Text, View, ScrollView, DeviceEventEmitter} from 'react-native'
 import MyToastPlugin from 'react-native-my-toast-plugin'
 
 import Btn from './Button'
 
 export default class App extends Component<> {
     state = {
-        message: '--'
+        message: '--',
+        countIndex: 0
+    }
+
+    componentDidMount() {
+        console.log('componentDidMount..')
+        this.listener = DeviceEventEmitter.addListener('count', (result) => {
+            this.setState({
+                countIndex: result.index
+            })
+            console.log("count: " + JSON.stringify(result))
+        })
+    }
+
+    componentWillUnmount() {
+        console.log('componentWillUnmount..')
+        this.listener.remove()
+
     }
 
     _chatWithCallback() {
-        MyToastPlugin.sampleMethod2('Testing', 123, (message) => {
+        MyToastPlugin.testCallBack('Testing', (message) => {
             this.setState({
                 message
             })
@@ -18,10 +35,25 @@ export default class App extends Component<> {
     }
 
     _chatWithPromise() {
-        MyToastPlugin.toast('哈哈').then(result => {
+        MyToastPlugin.testPromise('哈哈').then(result => {
             alert(JSON.stringify(result))
         })
     }
+
+    _printActivity() {
+        MyToastPlugin.printActivity().then(result => {
+            alert(JSON.stringify(result))
+        })
+    }
+
+    _count() {
+        MyToastPlugin.count()
+    }
+
+    _stopCount() {
+        MyToastPlugin.stopCount()
+    }
+
 
     render() {
         return (
@@ -31,7 +63,12 @@ export default class App extends Component<> {
                     <Btn title='Promise' onPress={() => {
                         this._chatWithPromise()
                     }}/>
+
+                    <Btn title='printActivity' onPress={this._printActivity.bind(this)}/>
+                    <Btn title='count' onPress={this._count.bind(this)}/>
+                    <Btn title='stopCount' onPress={this._stopCount.bind(this)}/>
                     <Text>{this.state.message}</Text>
+                    <Text>{this.state.countIndex}</Text>
                 </View>
             </ScrollView>
         )
