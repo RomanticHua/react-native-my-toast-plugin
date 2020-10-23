@@ -1,5 +1,8 @@
 package com.king.toast;
 
+import android.widget.Toast;
+
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -23,5 +26,19 @@ public class MyToastPluginModule extends ReactContextBaseJavaModule {
     public void sampleMethod(String stringArgument, int numberArgument, Callback callback) {
         // TODO: Implement some actually useful functionality
         callback.invoke("Received numberArgument: " + numberArgument + " stringArgument: " + stringArgument);
+    }
+
+    @ReactMethod
+    public void sampleMethod2(String stringArgument, int numberArgument, Callback callback) {
+        // TODO: Implement some actually useful functionality
+        callback.invoke("AAAA " + numberArgument + " stringArgument: " + stringArgument);
+    }
+
+    @ReactMethod
+    public void toast(String message, Promise promise) {
+        Toast.makeText(reactContext, message, Toast.LENGTH_SHORT).show();
+        if (promise != null) {
+            promise.resolve("Promise");
+        }
     }
 }
